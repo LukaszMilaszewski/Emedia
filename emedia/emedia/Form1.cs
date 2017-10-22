@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,9 +31,17 @@ namespace emedia
 
         }
 
-        private void saveButton_Click(object sender, EventArgs e)
-        {
-
+        private void saveButton_Click(object sender, EventArgs e) {
+            var fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Files (wav)|*.wav";
+            fileDialog.ShowDialog();
+            SaveTextBox.Text = fileDialog.FileName;
+            FileStream fs;
+            fs = new FileStream(fileDialog.FileName, FileMode.Create);
+            BinaryWriter bw = new BinaryWriter(fs);
+            wav.convertToBytes(bw);
+            bw.Close();
+            fs.Close();
         }
 
         private void loadButton_Click(object sender, EventArgs e) {
@@ -40,30 +49,34 @@ namespace emedia
             fileDialog.Filter = "Files (wav)|*.wav";
             fileDialog.ShowDialog();
             loadTextBox.Text = fileDialog.FileName;
-           
+            listBox.Items.Clear();
+
             FileStream fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fs);
             wav = new WAV(br);
             setListBox(wav);
+            br.Close();
+            fs.Close();
         
             listBox.Visible = true;
             spectrumChart.Visible = true;
         }
 
         private void setListBox(WAV wav) {
-            listBox.Items.Add("chunkID: " + wav.chunkID);
-            listBox.Items.Add("chunkSize: " + wav.chunkSize);
-            listBox.Items.Add("format: " + wav.format);
-            listBox.Items.Add("subchunk1ID: " + wav.subchunk1ID);
-            listBox.Items.Add("subchunk1Size: " + wav.subchunk1Size);
-            listBox.Items.Add("audioFormat: " + wav.audioFormat);
-            listBox.Items.Add("NumChannels: " + wav.numChanels);
-            listBox.Items.Add("SampleRate: " + wav.sampleRate);
-            listBox.Items.Add("ByteRate: " + wav.byteRate);
-            listBox.Items.Add("BlockAlign: " + wav.blockAlign);
-            listBox.Items.Add("BitsPerSample: " + wav.bitsPerSample);
-            listBox.Items.Add("subchunk2ID: " + wav.subchunk2ID);
-            listBox.Items.Add("subchunk2Size: " + wav.subchunk2Size);
+            listBox.Items.Add("chunkID: " + wav.header.chunkID);
+            listBox.Items.Add("chunkSize: " + wav.header.chunkSize);
+            listBox.Items.Add("format: " + wav.header.format);
+            listBox.Items.Add("subchunk1ID: " + wav.header.subchunk1ID);
+            listBox.Items.Add("subchunk1Size: " + wav.header.subchunk1Size);
+            listBox.Items.Add("audioFormat: " + wav.header.audioFormat);
+            listBox.Items.Add("NumChannels: " + wav.header.numChanels);
+            listBox.Items.Add("SampleRate: " + wav.header.sampleRate);
+            listBox.Items.Add("ByteRate: " + wav.header.byteRate);
+            listBox.Items.Add("BlockAlign: " + wav.header.blockAlign);
+            listBox.Items.Add("BitsPerSample: " + wav.header.bitsPerSample);
+            listBox.Items.Add("subchunk2ID: " + wav.header.subchunk2ID);
+            listBox.Items.Add("subchunk2Size: " + wav.header.subchunk2Size);
         }
     }
+
 }
