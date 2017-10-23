@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using AForge.Math;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace emedia
 {
-    public partial class Form1 : Form
-    {
+    public partial class Form1 : Form {
+
+        List<Point> pointsList = new List<Point>();
 
         WAV wav;
-
-        public Form1()
-        {
+        public Form1() {
             InitializeComponent();
             loadTextBox.ReadOnly = true;
             SaveTextBox.ReadOnly = true;
@@ -26,10 +20,7 @@ namespace emedia
             listBox.Visible = false;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+        private void Form1_Load(object sender, EventArgs e) { }
 
         private void saveButton_Click(object sender, EventArgs e) {
             var fileDialog = new SaveFileDialog();
@@ -57,9 +48,32 @@ namespace emedia
             setListBox(wav);
             br.Close();
             fs.Close();
-        
+
             listBox.Visible = true;
             spectrumChart.Visible = true;
+
+            var tabCom = new Complex[1024];
+            float[] data = wav.getFloatData();
+            for (int i = 0; i < 1024; i++) {
+                tabCom[i] = new Complex(data[i], 0);
+            }
+
+            FourierTransform.FFT(tabCom, FourierTransform.Direction.Forward);
+
+            for (int i = 0; i < 512; i++)
+            {
+                pointsList.Add(new Point() { x = (wav.header.sampleRate * i) / 511, y = tabCom[i].Magnitude * 1000 });
+            }
+            spectrumChart.Series.Clear();
+
+            spectrumChart.Series.Add("Spectrum");
+            foreach (var p in pointsList)
+            {
+
+                spectrumChart.Series["Spectrum"].Points.AddXY(p.x, p.y);
+            }
+
+
         }
 
         private void setListBox(WAV wav) {

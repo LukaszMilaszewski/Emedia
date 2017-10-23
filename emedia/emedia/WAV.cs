@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace emedia {
     class Header {
         public string chunkID { get; set; }
@@ -64,6 +65,30 @@ namespace emedia {
         public void convertToBytes(BinaryWriter bw) {
             header.convertToBytes(bw);
             bw.Write(data);
+        }
+
+        public float[] getFloatData() {
+            var floatArray = new float[data.Length / 2];
+
+            Console.WriteLine(data[10]);
+            Int16 result = 0;
+            string value = "";
+            int index = 0;
+            for (int i = 0; i < floatArray.Length; i++)
+            {
+                value+= data[index+1].ToString("X2");
+                value+= data[index].ToString("X2");
+                index += 2;
+
+                result = Convert.ToInt16(value, 16);
+                value = "";
+                float f = ((float)result) / (float)Int16.MaxValue;
+                floatArray[i] = f;
+                if (f > 1) floatArray[i] = 1;
+                if (f < -1) floatArray[i] = -1;
+            }
+
+            return floatArray;
         }
     }
 }
