@@ -79,6 +79,7 @@
             this.encryptButton.TabIndex = 4;
             this.encryptButton.Text = "Encrypt";
             this.encryptButton.UseVisualStyleBackColor = true;
+            this.encryptButton.Click += new System.EventHandler(this.encryptButton_Click);
             // 
             // decryptButton
             // 
@@ -88,6 +89,7 @@
             this.decryptButton.TabIndex = 5;
             this.decryptButton.Text = "Decrypt";
             this.decryptButton.UseVisualStyleBackColor = true;
+            this.decryptButton.Click += new System.EventHandler(this.decryptButton_Click);
             // 
             // spectrumChart
             // 

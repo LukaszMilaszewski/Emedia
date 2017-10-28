@@ -42,9 +42,9 @@ namespace emedia {
 
     class WAV {
         public Header header { get; private set; }
-        public byte[] data { get; private set; }
+        public byte[] data { get; set; }
 
-        public WAV(BinaryReader br) {
+        public WAV(BinaryReader br, int streamLength) {
             header = new Header();
             header.chunkID = Encoding.UTF8.GetString(br.ReadBytes(4));
             header.chunkSize = br.ReadInt32();
@@ -59,7 +59,8 @@ namespace emedia {
             header.bitsPerSample = br.ReadInt16();
             header.subchunk2ID = Encoding.UTF8.GetString(br.ReadBytes(4));
             header.subchunk2Size = br.ReadInt32();
-            data = br.ReadBytes(header.subchunk2Size);
+            data = br.ReadBytes(streamLength - 44);
+            Console.WriteLine("constructor bytes: " + data.Length);
         }
 
         public void convertToBytes(BinaryWriter bw) {

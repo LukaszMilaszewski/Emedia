@@ -12,6 +12,7 @@ namespace emedia
         List<Point> pointsList = new List<Point>();
 
         WAV wav;
+
         public Form1() {
             InitializeComponent();
             loadTextBox.ReadOnly = true;
@@ -41,16 +42,19 @@ namespace emedia
             fileDialog.ShowDialog();
             loadTextBox.Text = fileDialog.FileName;
             listBox.Items.Clear();
-
+            pointsList.Clear();
             FileStream fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fs);
-            wav = new WAV(br);
+            wav = new WAV(br, (int)fs.Length);
             setListBox(wav);
             br.Close();
             fs.Close();
 
             listBox.Visible = true;
             spectrumChart.Visible = true;
+            spectrumChart.Series.Clear();
+            spectrumChart.Update();
+            spectrumChart.ResetAutoValues();
 
             var tabCom = new Complex[1024];
             float[] data = wav.getFloatData();
@@ -91,6 +95,16 @@ namespace emedia
             listBox.Items.Add("subchunk2ID: " + wav.header.subchunk2ID);
             listBox.Items.Add("subchunk2Size: " + wav.header.subchunk2Size);
         }
-    }
 
+        private void encryptButton_Click(object sender, EventArgs e) {
+            RSA.createKeys(233, 293);
+            wav.data = RSA.getEncryptedData(wav.data);
+
+        }
+
+        private void decryptButton_Click(object sender, EventArgs e) {
+            RSA.createKeys(233, 293);
+            wav.data = RSA.getDecryptedData(wav.data);
+        }
+    }
 }
