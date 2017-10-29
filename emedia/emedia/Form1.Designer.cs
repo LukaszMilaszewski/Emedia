@@ -107,7 +107,7 @@
             this.spectrumChart.TabIndex = 6;
             this.spectrumChart.Text = "Spectrum Chart";
             title1.Name = "Title1";
-            title1.Text = "FFT - 1000 samples";
+            title1.Text = "FFT - 1024 samples";
             this.spectrumChart.Titles.Add(title1);
             // 
             // loadTextBox

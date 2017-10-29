@@ -12,8 +12,7 @@ namespace emedia {
         public static Key publicKey;
         public static Key privateKey;
 
-        public static void createKeys(int p, int q)
-        {
+        public static void createKeys(int p, int q) {
             RSA.p = p;
             RSA.q = q;
 
@@ -26,21 +25,17 @@ namespace emedia {
         }
 
 
-        public static byte[] getEncryptedData(byte[] bytes)
-        {
+        public static byte[] getEncryptedData(byte[] bytes) {
             List<byte> result = new List<byte>();
             int value = 0;
             string hexArray = "";
 
             Console.WriteLine("bytes: " + bytes.Length);
-            for (int j = 0; j < bytes.Length; j += 2)
-            {
-                for (int i = j; i < j + 2; i++)
-                {
+            for (int j = 0; j < bytes.Length; j += 2) {
+                for (int i = j; i < j + 2; i++) {
                     if (i >= bytes.Length)
                         hexArray = hexArray + "00";
-                    else
-                    {
+                    else {
                         hexArray = hexArray + bytes[i].ToString("X2");
                     }
                 }
@@ -48,8 +43,7 @@ namespace emedia {
                 value = powerModulo(value, publicKey.e, publicKey.n);
                 hexArray = value.ToString("X6");
                 string text = "";
-                for (int i = 0; i < hexArray.Length; i += 2)
-                {
+                for (int i = 0; i < hexArray.Length; i += 2) {
                     text = hexArray[i].ToString() + hexArray[i + 1].ToString();
                     result.Add(Convert.ToByte(text, 16));
                 }
@@ -60,29 +54,23 @@ namespace emedia {
             return result.ToArray();
         }
 
-        public static byte[] getDecryptedData(byte[] bytes)
-        {
+        public static byte[] getDecryptedData(byte[] bytes) {
             List<byte> result = new List<byte>();
             int value = 0;
             string hexArray = "";
-            for (int j = 0; j < bytes.Length; j += 3)
-            {
-                for (int i = j; i < j + 3; i++)
-                {
+            for (int j = 0; j < bytes.Length; j += 3) {
+                for (int i = j; i < j + 3; i++) {
                     if (i >= bytes.Length)
                         hexArray = hexArray + "00";
-                    else
-                    {
+                    else {
                         hexArray = hexArray + bytes[i].ToString("X2");
                     }
                 }
                 value = Convert.ToInt32(hexArray, 16);
-                //  Console.WriteLine("VAL: " + value);
                 value = powerModulo(value, privateKey.e, privateKey.n);
                 hexArray = value.ToString("X4");
                 string text = "";
-                for (int i = 0; i < hexArray.Length; i += 2)
-                {
+                for (int i = 0; i < hexArray.Length; i += 2) {
                     text = hexArray[i].ToString() + hexArray[i + 1].ToString();
                     result.Add(Convert.ToByte(text, 16));
                 }
@@ -110,12 +98,10 @@ namespace emedia {
             return result;
         }
 
-        private static int GCD(int a, int b)
-        {
+        private static int GCD(int a, int b) {
             int Remainder;
 
-            while (b != 0)
-            {
+            while (b != 0) {
                 Remainder = a % b;
                 a = b;
                 b = Remainder;

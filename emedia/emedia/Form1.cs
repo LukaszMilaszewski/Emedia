@@ -5,12 +5,10 @@ using AForge.Math;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace emedia
-{
+namespace emedia {
     public partial class Form1 : Form {
 
         List<Point> pointsList = new List<Point>();
-
         WAV wav;
 
         public Form1() {
@@ -34,6 +32,7 @@ namespace emedia
             wav.convertToBytes(bw);
             bw.Close();
             fs.Close();
+            MessageBox.Show("File saved!");
         }
 
         private void loadButton_Click(object sender, EventArgs e) {
@@ -64,20 +63,18 @@ namespace emedia
 
             FourierTransform.FFT(tabCom, FourierTransform.Direction.Forward);
 
-            for (int i = 0; i < 512; i++)
-            {
+            for (int i = 0; i < 512; i++) {
                 pointsList.Add(new Point() { x = (wav.header.sampleRate * i) / 511, y = tabCom[i].Magnitude * 1000 });
             }
             spectrumChart.Series.Clear();
-
             spectrumChart.Series.Add("Spectrum");
-            foreach (var p in pointsList)
-            {
 
+            foreach (var p in pointsList) {
                 spectrumChart.Series["Spectrum"].Points.AddXY(p.x, p.y);
             }
 
 
+            MessageBox.Show("File loaded!");
         }
 
         private void setListBox(WAV wav) {
@@ -99,12 +96,13 @@ namespace emedia
         private void encryptButton_Click(object sender, EventArgs e) {
             RSA.createKeys(233, 293);
             wav.data = RSA.getEncryptedData(wav.data);
-
+            MessageBox.Show("Encrypted!");
         }
 
         private void decryptButton_Click(object sender, EventArgs e) {
             RSA.createKeys(233, 293);
             wav.data = RSA.getDecryptedData(wav.data);
+            MessageBox.Show("Decrypted!");
         }
     }
 }

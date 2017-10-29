@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace emedia
-{
-    class Point
-    {
+namespace emedia {
+    class Point {
         public double x { get; set; }
         public double y { get; set; }
     }
